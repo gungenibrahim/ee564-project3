@@ -3,27 +3,26 @@
 
 
 %% INTRODUCTION
-% In this project, traction asynchronous squirrel cage induction motor 
-% (with copper rotor-bars) is designed. Then, designed motor will be analyzed 
-% with FEM program. Specificitions of the generator as follows,
+% In this project,quirrel cage induction generator will be designed for 
+% the Northel Energy's VIRA-250 wind turbine. Then, designed motor will be analyzed 
+% analyzed with FEM program. Specificitions of the generator as follows,
 
 %%
-% * Rated Power Output: 1280 kW
-% * Line-to-line voltage: 1350 V
-% * Number of poles: 6
-% * Rated Speed: 1520 rpm (72 km/h) (driven with 78 Hz inverter)
-% * Rated Motor Torque: 7843 Nm
-% * Cooling: Forced Air Cooling
-% * Insulating Class: 200C
-% * Train Wheel Diameter: 1210 mm
-% * Maximum Speed: 140 km/h
-% * Gear Ratio: 4.82
+% * Rated Power: 250 kW
+% * Rated Wind Speed: 14 m/s
+% * Rated Turbine Speed: 24.3 rpm
+% * Gear Ratio: 31.2
+% * Number of Poles: 8
+% * Line to line voltage: 400 V
+% * Frequency: 50 Hz
+% * Rated Speed: 758 rpm
+% * Gearbox: (Coupled from wind turbine blade)
 % * Intended duty cycle :S1, direct on-line drive
 % * 3 phase
 %%
 % Design steps at below will be followed at this design.
 %%
-% =================>>>>>>>>>>>>>>>>>>>>>>>> procedure koyulacak
+% =================>>>>>>>>>>>>>>>>>>>>>>>> procedure.jpg koyulacak
 
 %%
 %
@@ -36,29 +35,59 @@
 % target efficiency is chosen %96.
 %=================>>>>>>>>>>>>>>>>>>>>>>>>>>verim standardý eklenecek
 
+%%
 
-
-Prated = 1280e3; %W
-Vline = 1350; %V
-Npole = 6;
-n_rated = 1520; %rpm
+Prated = 250e3; %W
+Vline = 400; %V
+Npole = 8;
+n_rated = 758; %rpm
 T_rated = 7843; %Nm
-f_rated = 78; %Hz
-v_rated = 74; %km/h
+f_rated = 50; %Hz
 eff_des = 96; % %
 Vph = Vline/sqrt(3);
 Pph = Prated/3;
 
+Npole_pair = Npole/2;
+
 Iph = Pph/Vph;
 
-u0 = 4*pi*e-7;
+f_syn = f_rated/Npole_pair
+n_syn = f_syn *60
+
+
+u0 = 4*pi*10e-7;
 Bav = 0.5; %T
 
 maxwell_stress_tensor = 0.5*(Bav^2)/u0;
 
+%%
+% Cmech should be detected according to calculated power per pole.
+%%
 
+P_per_pole = Prated/Npole;
 
+%%
+%   ===>>>>>>>>>>>>>>>>>>>>>>>>>>>>Cmech grafiði koyulacak
+%%
 
+Cmech = 200;
+
+%%
+% Product of diameter^2 and length of the motor can be calculated from 
+% power and machine constant Cmech. 
+% Pmech = Cmech*D^2*l'*nsync;
+% Also, aspect ratio should be calculated for decide dimensions.
+% Aspect ratio= pi*(pole_pair^(1/3))/(4*pole_pair)
+
+%%
+
+D2L = P_rated/(Cmech* n_syn)
+
+Aspect_Ratio= pi*(Npole_pair^(1/3))/(4*Npole_pair)
+
+%%
+%L_machine = Aspect_Ratio * D_machine;
+%%
 
 
 

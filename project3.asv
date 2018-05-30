@@ -41,7 +41,8 @@ P_rated = 250e3; %W
 Vline = 400; %V
 Npole = 8;
 n_rated = 758; %rpm
-T_rated = 7843; %Nm
+w_rated = n_rated/60*2*pi;
+T_rated = P_rated/w_rated; %Nm
 f_rated = 50; %Hz
 eff_des = 96; % %
 Vph = Vline/sqrt(3);
@@ -56,9 +57,9 @@ n_syn = f_syn *60
 
 
 u0 = 4*pi*10e-7;
-Bav = 0.5; %T
 
-maxwell_stress_tensor = 0.5*(Bav^2)/u0;
+
+
 
 
 
@@ -76,7 +77,7 @@ fprintf('Power per pole is %g\n.',P_per_pole);
 %   ===>>>>>>>>>>>>>>>>>>>>>>>>>>>>Cmech grafiði koyulacak
 %%
 
-Cmech = 200;
+Cmech = 200000;
 
 %%
 % Product of inner_diameter^2 and length of the motor can be calculated from 
@@ -88,27 +89,59 @@ Cmech = 200;
  
 %%
 
-D2L = P_rated/(Cmech* n_syn);
+D2L = P_rated/(Cmech* f_syn);
 
 Aspect_Ratio= pi*(Npole_pair^(1/3))/(2*Npole_pair);
 
-fprintf('Aspect ratio and di^2*L are %g\n, %g\n respectively ',D2L, Aspect_Ratio);
-
+fprintf('di^2*L is %g\n ',D2L);
+fprintf('Aspect ratio is %g\n', Aspect_Ratio);
 %%
 % L_machine = Aspect_Ratio * D_machine
 %%
 %%
-% d^2*l' is equal to the 1.66 and aspect ratio is 0.31. Also aspect ratio
+% Di^2*L is equal to the 1.66 and aspect ratio is 0.31. Also aspect ratio
 % is equal to the  0.62. From previous parameters(D2L and aspect ratio),
 % inner diameter and length of machine can be calculated.
+
+% Moreover, outer diameter is calculated according to following table, which
+% is generalized the outer diameter towards to the number of pole. Outer diameter
+% coefficiend is decreasing when number of pole increase because magnetic
+% flux density at the yoke decrease propotionally.
+
+%=================================> Do tablosunu ekle !!!!!!!!!!!!!!!!!!!
+
+
 %%
 
 M_inner_diameter = (D2L/Aspect_Ratio)^(1/3);
-M_length = M_inner_diameter/Aspect_Ratio;
+M_length = M_inner_diameter*Aspect_Ratio;
+M_outer_diameter = 1.66*M_inner_diameter;
 
-fprintf('Inner diameter is  %g\n ',M_inner_diameter);
+fprintf('Inner diameter is  %g\n m ',M_inner_diameter);
+fprintf('Outer diameter is  %g\n m ',M_outer_diameter);
 
-fprintf('Machine length is  %g\n ',M_length);
+
+fprintf('Machine length is  %g\n m',M_length);
+
+%%
+% After decide the main dimensions, we should check it with tangential(shear)
+% stress. It shold an interval which is specified folloing table.
+
+%====================>>>>>>>>>>>>> shear stresi filan gösteren tabloyu
+%ekle!!!!!!!!!!!!!!!!!!!!
+%%
+
+M_inner_radius = M_inner_diameter/2;
+F_tan = T_rated/M_inner_radius;
+M_surface_area = M_inner_diameter*pi*M_length;
+
+
+Shear_stress = F_tan/M_surface_area/1000; %Kpa
+
+fprintf('Shear stress is  %g\n Kpa',Shear_stress);
+
+
+%%
 
 %% Airgap
 %%
@@ -125,10 +158,19 @@ fprintf('Machine length is  %g\n ',M_length);
 %%
 airgap = (0.18 + 0.006*P_rated^0.4)/1000;
 
-fprintf('Airgap is  %g\n ',airgap);
+fprintf('Airgap is  %g\n m ',airgap);
 
 %% Winding Selection
-%
+%%
+% In this part of the project, number of slots of rotor and stator and
+% winding factors of higher harmonics are calculated.
+%%
+
+
+
+%%
+
+
 
 
 

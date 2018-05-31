@@ -162,7 +162,7 @@ airgap = (0.18 + 0.006*P_rated^0.4)/1000;
 
 fprintf('Airgap is  %g\n ',airgap);
 
-%% Winding Selection
+%% Electrical Parameters and Winding Selection
 %%
 % In this part of the project, number of slots of rotor and stator and
 % winding factors of higher harmonics are calculated.
@@ -227,7 +227,7 @@ fprintf('Winding factor of 7th harmonic is  %g\n  ',Kw_7);
 
 %% 
 
-Bg_av = 0.51;
+Bg_av = 0.57;
 
 Ind_emf = Vph;
 
@@ -240,21 +240,59 @@ fprintf('Calculated number of turns per phase is  %g\n  ',Nph);
 fprintf('Calculated number of turns per slot is  %g\n  ',Ns);
 
 %%
-% To make number of turns integer Ns is taken 3.  
+% To make number of turns integer Ns is taken 3.
 %%
 Ns = 3;
 Nph = Ns*(Npole_pair*qs);
 fprintf('Number of turns per phase is  %g\n  ',Nph);
 fprintf('Number of turns per slot is  %g\n  ',Ns);
 
+%%
+% Electrical loading is calculated as A = Ns*I*Qs/(pi*Di)
+%%
+
+A = Ns*Iph*Qs/(pi*M_inner_diameter)/1000; %kA/m
+
+fprintf('Electrical loading is  %g kA/m  ',A);
+
+
+%%
+
+
+%% Teeth Dimensions
+
 
 %% Magnetic Parameters
+%%
+% Magnetic loading is specified previous part, which is equal to the 0.51T
+% specified at below. Calculation details are made at the Project-2. Therefore,
+% for this design, we do not know teeth dimensions yet, so that we have to
+% decide either magnetic paramters or teeth dimensions, then calculate
+% other one. At previous project, we selected lamination first, then made a
+% design. But, at this project, I would like to experience other way so
+% that, I will specify magnetic parameters at desired intervals which is shown
+% at following figure from textbook.
 
 
+%:=================================magnetic aralýðý ekle!!!!!!!!!!!!!
+%%
+
+Bg_av = 0.51; %T
+Bg = 0.8;   %T 
+Bs_yoke = 1.6;  %T
+Bs_tooth = 1.9; %T
+Br_yoke = 1.5;  %T
+Br_tooth = 2.0;  %T
+
+fprintf('Magnetic Loading is  %g\n T\n ',Bg_av);
+fprintf('Selected air gap flux density is  %g\n T\n ',Bg);
+fprintf('Selected stator yoke flux density is  %g\n T\n',Bs_yoke);
+fprintf('Selected stator teeth flux density is  %g\n T\n',Bs_tooth);
+fprintf('Selected rotor yoke flux density is  %g\n T\n ',Br_yoke);
+fprintf('Selected rotor teeth flux density is  %g\n T\n ',Br_tooth);
 
 
-
-
+%%
 
 
 

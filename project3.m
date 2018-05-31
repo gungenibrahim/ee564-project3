@@ -29,7 +29,7 @@
 % %
 %%
 
-%% STARTING VALUES
+%% Starting Values
 % For this design, I aimed premium efficiency class because motor consumes
 % high energy. It saturates %95.8 efficiency for high energy motors. Then, 
 % target efficiency is chosen %96.
@@ -55,6 +55,7 @@ Iph = Pph/Vph;
 f_syn = f_rated/Npole_pair
 n_syn = f_syn *60
 
+Number_of_ph = 3;
 
 u0 = 4*pi*10e-7;
 
@@ -117,11 +118,11 @@ M_inner_diameter = (D2L/Aspect_Ratio)^(1/3);
 M_length = M_inner_diameter*Aspect_Ratio;
 M_outer_diameter = 1.66*M_inner_diameter;
 
-fprintf('Inner diameter is  %g\n m ',M_inner_diameter);
-fprintf('Outer diameter is  %g\n m ',M_outer_diameter);
+fprintf('Inner diameter is  %g\n ',M_inner_diameter);
+fprintf('Outer diameter is  %g\n ',M_outer_diameter);
 
 
-fprintf('Machine length is  %g\n m',M_length);
+fprintf('Machine length is  %g\n',M_length);
 
 %%
 % After decide the main dimensions, we should check it with tangential(shear)
@@ -138,9 +139,10 @@ M_surface_area = M_inner_diameter*pi*M_length;
 
 Shear_stress = F_tan/M_surface_area/1000; %Kpa
 
-fprintf('Shear stress is  %g\n Kpa',Shear_stress);
+fprintf('Shear stress is  %g\n',Shear_stress);
 
-
+%%
+% Shear stress value is appropriate. So, dimensions are checked.
 %%
 
 %% Airgap
@@ -158,17 +160,100 @@ fprintf('Shear stress is  %g\n Kpa',Shear_stress);
 %%
 airgap = (0.18 + 0.006*P_rated^0.4)/1000;
 
-fprintf('Airgap is  %g\n m ',airgap);
+fprintf('Airgap is  %g\n ',airgap);
 
 %% Winding Selection
 %%
 % In this part of the project, number of slots of rotor and stator and
 % winding factors of higher harmonics are calculated.
+% For high pole machine, it is prefered to have Qr = Qs*1.2. In order to
+% prevent cogging problem number of rotor and stator should be different
+% and some combinations of these shold be avoided as Qs = 2Qr, Qr = Qs +-2p,
+% etc. Moreover, if Qr = 6pg +-2p+-1, g is an integer, mechanical noise and
+% vibrations could be observed.
+
+% Number of slots per pole per phase is decided 3.
+%%
+qs = 3;
+Qs = qs*Number_of_ph*Npole;
+
+%%
+% Qr = 1.2*Qs is nearly 86 and in general design, Qs/Qr = 72/88 is used.
 %%
 
+Qr = 88;
+
+fprintf('Number of stator slots are  %g\n  ',Qs);
+fprintf('Number of rotor slots are  %g\n  ',Qr);
+
+%%
+% In order to eliminate 5th harmonics of the machine, it is prefered to
+% design double layer winding with 7/9 pitch factor.
+%%
+pitch_factor = 7/9;
+slot_angle = pi*Npole/Qs;
+pitch_angle = pitch_factor*pi;
+pole_pitch = pi*M_inner_diameter/Npole;
+
+Kd_1 = sin(qs*slot_angle/2)/(qs*sin(slot_angle/2));
+Kp_1 = sin(pitch_angle/2);
+Kw_1 = Kd_1*Kp_1;
+
+Kd_3 = sin(3*qs*slot_angle/2)/(qs*sin(3*slot_angle/2));
+Kp_3 = sin(3*pitch_angle/2);
+Kw_3 = Kd_3*Kp_3;
+
+Kd_5 = sin(5*qs*slot_angle/2)/(qs*sin(5*slot_angle/2));
+Kp_5 = sin(5*pitch_angle/2);
+Kw_5 = Kd_5*Kp_5;
+
+Kd_7 = sin(7*qs*slot_angle/2)/(qs*sin(7*slot_angle/2));
+Kp_7 = sin(7*pitch_angle/2);
+Kw_7 = Kd_7*Kp_7;
+
+fprintf('Winding factor of fundemental harmonic is  %g\n  ',Kw_1);
+fprintf('Winding factor of 3rd harmonic is  %g\n  ',Kw_3);
+fprintf('Winding factor of 5th harmonic is  %g\n  ',Kw_5);
+fprintf('Winding factor of 7th harmonic is  %g\n  ',Kw_7);
 
 
 %%
+% Nunber of turns can be calculated induced emf formula. Induced emf is near
+% to the phase voltage.
+
+% At the project-2, deciding airgap average flux density is explained so 
+% that I have chosen peak of airgap magnetic flux density 0.8T, magnetic
+% loading is nearly 0.51T.
+
+%% 
+
+Bg_av = 0.51;
+
+Ind_emf = Vph;
+
+flux_per_pole = Bg_av*pole_pitch*M_length;
+Nph = Ind_emf/(4.44*f_rated*flux_per_pole*Kw_1);
+
+Ns = Nph/(Npole_pair*qs);
+
+fprintf('Calculated number of turns per phase is  %g\n  ',Nph);
+fprintf('Calculated number of turns per slot is  %g\n  ',Ns);
+
+%%
+% To make number of turns integer Ns is taken 3.  
+%%
+Ns = 3;
+Nph = Ns*(Npole_pair*qs);
+fprintf('Number of turns per phase is  %g\n  ',Nph);
+fprintf('Number of turns per slot is  %g\n  ',Ns);
+
+
+%% Magnetic Parameters
+
+
+
+
+
 
 
 

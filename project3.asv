@@ -44,13 +44,14 @@ n_rated = 758; %rpm
 w_rated = n_rated/60*2*pi;
 T_rated = P_rated/w_rated; %Nm
 f_rated = 50; %Hz
-eff_des = 96; % %
+target_eff = 96; % %
+target_pf = 0.87;
 Vph = Vline/sqrt(3);
 Pph = Prated/3;
 
 Npole_pair = Npole/2;
 
-Iph = Pph/Vph;
+Iph = Pph/(Vph*target_eff*target_pf);
 
 f_syn = f_rated/Npole_pair
 n_syn = f_syn *60
@@ -62,7 +63,7 @@ u0 = 4*pi*10e-7;
 
 
 
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %% Main Dimensions
 % In this part, inner diameter and length of the machine will calculate. In
@@ -145,6 +146,10 @@ fprintf('Shear stress is  %g\n',Shear_stress);
 % Shear stress value is appropriate. So, dimensions are checked.
 %%
 
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 %% Airgap
 %%
 % After deciding main dimensions of the motor, airgap should be decided
@@ -161,6 +166,46 @@ fprintf('Shear stress is  %g\n',Shear_stress);
 airgap = (0.18 + 0.006*P_rated^0.4)/1000;
 
 fprintf('Airgap is  %g\n ',airgap);
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%% Magnetic Parameters
+%%
+% Magnetic loading is specified previous part, which is equal to the 0.51T
+% specified at below. Calculation details are made at the Project-2. Therefore,
+% for this design, we do not know teeth dimensions yet, so that we have to
+% decide either magnetic paramters or teeth dimensions, then calculate
+% other one. At previous project, we selected lamination first, then made a
+% design. But, at this project, I would like to experience other way so
+% that, I will specify magnetic parameters at desired intervals which is shown
+% at following figure from textbook.
+
+
+%=================================magnetic aralýðý ekle!!!!!!!!!!!!!
+%%
+
+Bg_av = 0.51; %T
+Bg = 0.8;   %T 
+Bs_yoke = 1.6;  %T
+Bs_tooth = 1.9; %T
+Br_yoke = 1.5;  %T
+Br_tooth = 2.0;  %T
+
+fprintf('Magnetic Loading is  %g\n T\n ',Bg_av);
+fprintf('Selected air gap flux density is  %g T\n ',Bg);
+fprintf('Selected stator yoke flux density is  %g T\n',Bs_yoke);
+fprintf('Selected stator teeth flux density is  %g T\n',Bs_tooth);
+fprintf('Selected rotor yoke flux density is  %g T\n ',Br_yoke);
+fprintf('Selected rotor teeth flux density is  %g T\n ',Br_tooth);
+
+
+%%
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %% Electrical Parameters and Winding Selection
 %%
@@ -227,7 +272,8 @@ fprintf('Winding factor of 7th harmonic is  %g\n  ',Kw_7);
 
 %% 
 
-Bg_av = 0.57;
+Bg_av = 0.51;
+magnetic_loading = 0.51;
 
 Ind_emf = Vph;
 
@@ -251,45 +297,117 @@ fprintf('Number of turns per slot is  %g\n  ',Ns);
 % Electrical loading is calculated as A = Ns*I*Qs/(pi*Di)
 %%
 
-A = Ns*Iph*Qs/(pi*M_inner_diameter)/1000; %kA/m
+A = Shear_stress/magnetic_loading; %kA/m
 
-fprintf('Electrical loading is  %g kA/m  ',A);
+fprintf('Magnetic loading is  %g T\n  ',magnetic_loading);
+fprintf('Electrical loading is  %g kA/m\n  ',A);
 
 
 %%
+% Electrical loading value is appropriate according to floowing figure from
+% textbook.
 
+% =========================elec_loading eklenecek!!!!!!!!!!!!!!!!!!!!!!!
+
+
+%%
+% In general, 7A/mm2 current densitiy is used for 8 pole air cooling 
+% machines. Also skin depth should be considered at maximum frequency. 
+
+%%
+cu_resistivity = 1.7e-8; % Ohm*m
+cu_permeability = 1.26e-6; % H/m
+f_max = f_rated;
+angular_frequency = 2*pi*f_max; % rad/sec
+skin_depth = sqrt(cu_resistivity*2/(angular_frequency*cu_permeability));
+copper_area = Iph/7;
+
+fprintf('Phase current is  %g kA\n  ',Iph);
+fprintf('skin depth is  %g mm\n  ',skin_depth*1000);
+fprintf('Needed copper area is  %g mm2\n  ',copper_area);
+
+%%
+% According to the skin depth value cable can have maximum 20mm diameter.
+% Phase current is calculated as 432Arms so that  5 parallel AWG4 cable can
+% be used. Because desired current density of AWG4 is about 6A/mm2. 
+
+% =================>>>>>>>>>>>>>awg tablosus eklenecek
+%%
+
+
+awg4_cross_area = 21.1; %mm2
+awg4_R_per_km = 0.081508; %ohm
+cable_cross_area = 5*awg4_cross_area;
+cable_R_per_km = awg4_R_per_km/5; 
+
+%%
+% I will make an approximation about copper length with following calculation. 
+%%
+one_turn_length = 2*M_length+2*M_inner_diameter/Npole_pair; 
+total_copper_length = one_turn_length*Qs*Ns/1000;
+copper_resistance = cable_R_per_km*total_copper_length;
+fprintf('Copper resistance is  %g ohm\n  ',copper_resistance);
+
+%%
+% At high power motors, fill factor is important because heating and 
+% insulation are effected to it. In general, this kind of application %50
+% fill factor is applicable. 
+
+%%
+fill_factor = 0.5;
+total_slot_area = 6*cable_cross_area/fill_factor; %mm^2
+
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%% New Airgap Magnetic Flux Density and Depended Parameters
+%%
+% Because of choosing higher turn number than calculated value length,
+% radius and airgap flux density will decrease
+%%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %% Teeth Dimensions
-
-
-%% Magnetic Parameters
 %%
-% Magnetic loading is specified previous part, which is equal to the 0.51T
-% specified at below. Calculation details are made at the Project-2. Therefore,
-% for this design, we do not know teeth dimensions yet, so that we have to
-% decide either magnetic paramters or teeth dimensions, then calculate
-% other one. At previous project, we selected lamination first, then made a
-% design. But, at this project, I would like to experience other way so
-% that, I will specify magnetic parameters at desired intervals which is shown
-% at following figure from textbook.
-
-
-%:=================================magnetic aralýðý ekle!!!!!!!!!!!!!
+% Teeth dimension will be calculated according to magnnetic flux densities.
+% Moreover, slots will be design tapered type slots because I would like to
+% make tooth width constant. Also, flux density always decreases at the
+% slot opening so that carter coeffcient should be calculated and airgap
+% distance estimate to calculate MMF and other dependent parameters.
+% 
 %%
 
-Bg_av = 0.51; %T
-Bg = 0.8;   %T 
-Bs_yoke = 1.6;  %T
-Bs_tooth = 1.9; %T
-Br_yoke = 1.5;  %T
-Br_tooth = 2.0;  %T
+slot_pitch = pole_pitch/9;
 
-fprintf('Magnetic Loading is  %g\n T\n ',Bg_av);
-fprintf('Selected air gap flux density is  %g\n T\n ',Bg);
-fprintf('Selected stator yoke flux density is  %g\n T\n',Bs_yoke);
-fprintf('Selected stator teeth flux density is  %g\n T\n',Bs_tooth);
-fprintf('Selected rotor yoke flux density is  %g\n T\n ',Br_yoke);
-fprintf('Selected rotor teeth flux density is  %g\n T\n ',Br_tooth);
+fprintf('Pole pitch is  %g m\n  ', pole_pitch);
+fprintf('Slot pitch is  %g m\n  ', slot_pitch);
+fprintf('Needed slot area is %g mm2\n  ', total_slot_area);
+
+
+
+%================>>>>>>>>>>>stator slot figuru !!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+%%
+% All flux of airgap could not flux through to teeth because there is a
+% leakege and fringing fluxes. So that, when I calculate teeth width, ý
+% will take %95 of flux passes.
+%%
+
+Kfe = 0.95;
+
+b_ts= Bg_av*slot_pitch/(Kfe*Bs_tooth);
+
+
+
+
+%%
+
+
+
+
+
 
 
 %%

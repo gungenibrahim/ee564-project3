@@ -47,7 +47,7 @@ f_rated = 50; %Hz
 target_eff = 96; % %
 target_pf = 0.87;
 Vph = Vline/sqrt(3);
-Pph = Prated/3;
+Pph = P_rated/3;
 
 Npole_pair = Npole/2;
 
@@ -71,7 +71,7 @@ u0 = 4*pi*10e-7;
 %to calculated power per pole.
 %%
 
-P_per_pole = Prated/Npole;
+P_per_pole = P_rated/Npole;
 
 fprintf('Power per pole is %g\n.',P_per_pole);
 
@@ -369,7 +369,7 @@ total_slot_area = 6*cable_cross_area/fill_factor; %mm^2
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%% Teeth Dimensions
+%% Stator Slot Dimensions
 %%
 % Teeth dimension will be calculated according to magnnetic flux densities.
 % Moreover, slots will be design tapered type slots because I would like to
@@ -381,8 +381,8 @@ total_slot_area = 6*cable_cross_area/fill_factor; %mm^2
 
 slot_pitch = pole_pitch/9;
 
-fprintf('Pole pitch is  %g m\n  ', pole_pitch);
-fprintf('Slot pitch is  %g m\n  ', slot_pitch);
+fprintf('Pole pitch is  %g mm\n  ', pole_pitch*1000);
+fprintf('Slot pitch is  %g mm\n  ', slot_pitch*1000);
 fprintf('Needed slot area is %g mm2\n  ', total_slot_area);
 
 
@@ -397,35 +397,72 @@ fprintf('Needed slot area is %g mm2\n  ', total_slot_area);
 
 Kfe = 0.95;
 
-b_ts= Bg_av*slot_pitch/(Kfe*Bs_tooth);
+b_ts= Bg_av*slot_pitch/(Kfe*Bs_tooth)*1000; %mm
 
-
-
-
+fprintf('Stator slot tooth width (b_ts) is %g mm\n',b_ts);
+%%
+% I will select slot openning according to the cable diameter to make
+% producing easier.
 %%
 
+b_os = 6; %mm
+h_os = 2;
+h_w = 2;
 
 
+b_s1 = pi*(M_inner_diameter*1e3+2*h_os+2*h_w)/Qs-b_ts; % mm
+
+fprintf('Stator slot opening width (b_os) is %g mm\n',b_os);
+fprintf('Stator slot opening height (h_os) is %g mm\n',h_os);
+fprintf('The bottom stator slot width (b_s1) is %g mm\n',b_s1);
 
 
+b_s2 = sqrt(4*total_slot_area*tan(pi/Qs)+b_s1^2);
 
+h_s = 2*total_slot_area/(b_s1+b_s2); % mm
 
+fprintf('The top stator slot width (b_s2) is %g mm\n',b_s2);
+fprintf('The useful stator slot height (hs) is %g mm\n',h_s);
+%%
+% Calculations are made by geometrical calculations. 
 %%
 
+h_cs = (1e3*M_outer_diameter-(1e3*M_inner_diameter+2*(h_os+h_w+h_s)))/2;
+
+fprintf('The thickness of stator back iron(yoke) is (h_cs) is %g mm\n',h_cs);
+
+%%
+% Check the yoke magnetic flux density.
+%%
+
+B_cs = flux_per_pole/(2*M_length*h_cs*1e-3);
+
+fprintf('Calculated Magnetic flux density at yoke is %g T\n',B_cs);
+fprintf('Aimed Magnetic flux density at yoke is %g T\n',Bs_yoke);
+%%
+% This value is smaller from saturation value of the iron so that, in order
+% to decrease mass and cost of the motor outer diameter could decrease.
+% I will increase B_cs value sligtly.
+%%
+
+B_cs_aimed = 1.4; %T
+
+h_cs_new = flux_per_pole/(2*M_length*B_cs_aimed*1e-3); % mm
+
+M_outer_diameter_new = (2*h_cs_new+(1e3*M_inner_diameter+2*(h_os+h_w+h_s)))*1e-3; % m
+
+fprintf('The decreased thickness of stator back iron(yoke) is (h_cs) is %g mm\n',h_cs_new);
+fprintf('The decreased outer diameter is %g m\n',M_outer_diameter_new);
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+%% Rotor Slot Dimensions
+%%
+% Rotor slots will fill aliminum so that fill factor is 1. Also, I will
+% choose shape of the rotor teeth according to easy producing.
 
-
-
-
-
-
-
-
-
-
-
+%%
 
 
 

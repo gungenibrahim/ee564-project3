@@ -261,6 +261,13 @@ Kd_11 = sin(11*qs*slot_angle/2)/(qs*sin(11*slot_angle/2));
 Kp_11 = sin(11*pitch_angle/2);
 Kw_11 = Kd_11*Kp_11;
 
+
+fprintf('Pitch factor is  %g\n',pitch_factor);
+fprintf('Slot angle is  %g\n rad',slot_angle);
+fprintf('Pitch angle is  %g\n rad',pitch_angle);
+
+
+
 fprintf('Winding factor of fundemental harmonic is  %g\n',Kw_1);
 fprintf('Winding factor of 5th harmonic is  %g\n',Kw_5);
 fprintf('Winding factor of 7th harmonic is  %g\n',Kw_7);
@@ -652,6 +659,8 @@ R2p = Rbe*4*Number_of_ph/Qr*(Nph*Kw_1)^2; % ohms
 R1p = ph_stator_copper_resistance;
 
 Rph = R1p+R2p;
+
+fprintf('Length of rotor ring is  %g mm\n',ler*1000);
 
 fprintf('Stator phase copper resistance is  %g ohm\n',R1p);
 fprintf('Rotor phase resistance referred to stator side is  %g ohm\n',R2p);

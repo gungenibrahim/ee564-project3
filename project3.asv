@@ -58,7 +58,7 @@ Iph = Pph/(Vph*target_eff*target_pf);% A
 
 f_syn = f_rated/Npole_pair; %hz
 n_syn = f_syn *60; %rpm
-w_sync = n_syn*2*pi/60; % rad/sec
+w_syn = n_syn*2*pi/60; % rad/sec
 
 Number_of_ph = 3;
 
@@ -260,6 +260,11 @@ Kw_7 = Kd_7*Kp_7;
 Kd_11 = sin(11*qs*slot_angle/2)/(qs*sin(11*slot_angle/2));
 Kp_11 = sin(11*pitch_angle/2);
 Kw_11 = Kd_11*Kp_11;
+
+
+fprintf('Pitch factor is  %g\n',pitch_factor);
+fprintf('Slot an is  %g\n',pitch_factor);
+
 
 fprintf('Winding factor of fundemental harmonic is  %g\n',Kw_1);
 fprintf('Winding factor of 5th harmonic is  %g\n',Kw_5);
@@ -621,6 +626,10 @@ P_rotor = u0*eqv_M_length*(Kx*P_r1+P_r2); % permeance
 Lrp = P_rotor*4*(Nph*Kw_1)^2*Number_of_ph/Qr; % Henries
 Xrp = 2*pi*f_rated*Lrp; % ohms
 
+
+Xph = Xs_ph+Xrp;
+
+
 fprintf('The magnetizing inductance of the machine is %g mH.\n',Lm*1e3);
 fprintf('The magnetizing reactance at 50Hz is %g Ohms.\n',Xm);
 fprintf('leakage inductance of the stator is %g mH.\n',Lph*1e3);
@@ -646,6 +655,8 @@ Rbe = resistivity_al*((M_length*Kr/(rotor_slot_area*1e-6))+(ler/(2*Rotor_al_area
 R2p = Rbe*4*Number_of_ph/Qr*(Nph*Kw_1)^2; % ohms
 
 R1p = ph_stator_copper_resistance;
+
+Rph = R1p+R2p;
 
 fprintf('Stator phase copper resistance is  %g ohm\n',R1p);
 fprintf('Rotor phase resistance referred to stator side is  %g ohm\n',R2p);
@@ -711,7 +722,7 @@ Pcore = iron_mass*K_core;
 % Core loss resistance can be calculated for equavalent circuit.
 %%
 Rc = Vph^2/(Pcore/3);
-
+fprintf('Core loss resistance(Rc) is %g ohm\n',Rc);
 
 Ploss = Pcore+Pcu;
 
@@ -737,35 +748,48 @@ fprintf('Efficiency is %g percent\n',Efficiency*100);
 
 
 %%
-% Thevenin variables is calculated.
+% Thevenin variables is calculated. 
 %%
 Zm = (1j*Xm*Rc)/(1j*Xm+Rc); % ohms
 Z1 = Rph+1j*Xph; % ohms
-Vth = Vphase*Zm/(Z1+Zm); % volts
+Vth = Vph*Zm/(Z1+Zm); % volts
 Zth = Z1*Zm/(Z1+Zm); % ohms
 Rth = real(Zth); % ohms
 Xth = imag(Zth); % ohms
 
-
-
-% Slip (and rotor speed) array
 s = -1:0.001:2;
 s = fliplr(s);
-Nr = Nsync*(1-s); % rpm
+Nr = n_syn*(1-s); % rpm
 wr = Nr*2*pi/60; % rad/sec
 num = numel(s);
-% Torque array using the calculated variables and slip variation
-Tm = (3*abs(Vth)^2/wsync)*(1./ ( (Rth+R2p./s).^2 + (Xth+Xrp)^2 ) )...
+Tm = (3*abs(Vth)^2/w_syn)*(1./ ( (Rth+R2p./s).^2 + (Xth+Xrp)^2 ) )...
     .*(R2p./s); % Nm
-% At synchronous speed, torque will be zero (avobe equation cannot calculate)
+
 Tm((s==0)) = 0; % Nm
-% Plot the torque-speed curve
 figure;
 plot(Nr,Tm,'k-','LineWidth',2.0);
 xlabel('Rotor speed (rpm)','Fontweight','Bold');
 ylabel('Torque (Nm)','Fontweight','Bold');
-title ('Induction Motor Torque-Speed Characteristic','Fontweight','Bold');
+title ('Induction Generator Torque-Speed Characteristic','Fontweight','Bold');
 grid on;
+
+figure;
+plot(Nr,Tm,'k-','LineWidth',2.0);
+xlabel('Rotor speed (rpm)','Fontweight','Bold');
+ylabel('Torque (Nm)','Fontweight','Bold');
+title ('Induction Generator Torque-Speed Characteristic','Fontweight','Bold');
+grid on;
+xlim([650 850]);
+
+
+Rated_slip = (n_syn-n_rated)/n_syn;
+fprintf('The rated slip is %g.\n',Rated_slip);
+Starting_torque = Tm((s==1)); % Nm
+Max_torque = max(Tm); % Nm
+slip_max_torque = s((Tm==Max_torque));
+fprintf('The starting torque of this machine is %d Nm.\n', Starting_torque);
+fprintf('The maximum torque of this machine is %d Nm.\n', Max_torque);
+fprintf('The slip at maximum torque is %d.\n', slip_max_torque);
 
 
 

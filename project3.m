@@ -349,7 +349,7 @@ fprintf('Needed copper area is  %g mm2\n',copper_area);
 
 awg4_cross_area = 21.1; %mm2
 awg4_R_per_km = 0.081508; %ohm
-cable_cross_area = 5*awg4_cross_area; %mm2
+cable_cross_area = 3*awg4_cross_area; %mm2
 cable_R_per_km = awg4_R_per_km/5;  %@25 degree
 
 %%
@@ -767,7 +767,7 @@ Nr = n_syn*(1-s); % rpm
 wr = Nr*2*pi/60; % rad/sec
 num = numel(s);
 Tm = (3*abs(Vth)^2/w_syn)*(1./ ( (Rth+R2p./s).^2 + (Xth+Xrp)^2 ) )...
-    .*(R2p./s); % Nm
+  .*(R2p./s); % Nm
 
 Tm((s==0)) = 0; % Nm
 figure;

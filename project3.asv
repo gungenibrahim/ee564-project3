@@ -263,7 +263,9 @@ Kw_11 = Kd_11*Kp_11;
 
 
 fprintf('Pitch factor is  %g\n',pitch_factor);
-fprintf('Slot an is  %g\n',pitch_factor);
+fprintf('Slot angle is  %g\n rad',slot_angle);
+fprintf('Pitch angle is  %g\n rad',pitch_angle);
+
 
 
 fprintf('Winding factor of fundemental harmonic is  %g\n',Kw_1);
@@ -658,6 +660,8 @@ R1p = ph_stator_copper_resistance;
 
 Rph = R1p+R2p;
 
+fprintf('Length of rotor ring is  %g mm\n',ler*1000);
+
 fprintf('Stator phase copper resistance is  %g ohm\n',R1p);
 fprintf('Rotor phase resistance referred to stator side is  %g ohm\n',R2p);
 
@@ -762,8 +766,7 @@ s = fliplr(s);
 Nr = n_syn*(1-s); % rpm
 wr = Nr*2*pi/60; % rad/sec
 num = numel(s);
-Tm = (3*abs(Vth)^2/w_syn)*(1./ ( (Rth+R2p./s).^2 + (Xth+Xrp)^2 ) )...
-    .*(R2p./s); % Nm
+Tm = (3*abs(Vth)^2/w_syn)*(1./((Rth+R2p./s).^2 + (Xth+Xrp)^2 ) )*(R2p./s); % Nm
 
 Tm((s==0)) = 0; % Nm
 figure;

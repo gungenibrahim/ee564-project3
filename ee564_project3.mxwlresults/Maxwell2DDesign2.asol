@@ -1,0 +1,139 @@
+$begin '$base_index$'
+  $begin 'properties'
+    all_levels=000000000000
+    time(year=000000002018, month=000000000006, day=000000000004, hour=000000000001, min=000000000015, sec=000000000008)
+    version=000000000000
+  $end 'properties'
+  $begin '$base_index$'
+    $index$(pos=000000003650, lin=000000000118, lvl=000000000000)
+  $end '$base_index$'
+$end '$base_index$'
+$begin 'SolutionBlock88'
+	SolutionName='AdaptivePass'
+	SolutionID=139
+	V=335
+	$begin 'States'
+		F(VID=130, Ver=335)
+	$end 'States'
+	$begin 'Definition'
+		SamplingInterpolation=false
+		Frequencies()
+		SolutionType=1
+		CenterFreq=0
+	$end 'Definition'
+	$begin 'NFSP'
+		$begin 'SubData'
+			ID=10
+			NFSP(VID=130, Ver=335, File='DV130_SOL139_NFSP10_V335.sd')
+		$end 'SubData'
+	$end 'NFSP'
+$end 'SolutionBlock88'
+$begin 'BlockMapName'
+	FileHeader='SolutionBlock1'
+	'SolutionKey(SimSetup=138, Instance=\'SetupDefinition\', Solution=-1, VersionID=0)'='SolutionBlock6'
+	'SolutionKey(SimSetup=138, Instance=\'SolutionDefinition\', Solution=139, VersionID=335)'='SolutionBlock88'
+	'SolutionKey(SimSetup=138, Instance=\'SolutionDefinition\', Solution=140, VersionID=335)'='SolutionBlock89'
+	'SolutionKey(SimSetup=138, Instance=\'fractions=\\\'4\\\'\', Solution=-3, VersionID=0)'='SolutionBlock17'
+$end 'BlockMapName'
+$begin 'SolutionBlock89'
+	SolutionName='LastAdaptive'
+	SolutionID=140
+	V=335
+	$begin 'States'
+		F(VID=130, Ver=335)
+	$end 'States'
+	$begin 'Definition'
+		SamplingInterpolation=false
+		Frequencies()
+		SolutionType=1
+		CenterFreq=0
+	$end 'Definition'
+	$begin 'Fields'
+		IDDblMap(191, -1)
+		$begin 'DataMap'
+			VID=130
+			Ver=335
+			Field(DblID=191, Dir='DV130_SOL140_V335.Field191/')
+		$end 'DataMap'
+	$end 'Fields'
+$end 'SolutionBlock89'
+$begin 'SolutionBlock6'
+	SimSetupID=138
+	SimSetupName='Setup1'
+	VersionID=0
+	SolveSetupID=1
+	$begin 'CurrMeshes'
+		IDDblMap(189, 1, 192, 2, 193, 3, 194, 4, 344, 5)
+		$begin 'DataMap'
+			VID=130
+			Ver=0
+			M(DblID=194, Dir='DV130_S138_V0.cmesh194/')
+			M(DblID=344, Dir='DV130_S138_V0.cmesh344/')
+		$end 'DataMap'
+	$end 'CurrMeshes'
+	$begin 'MeshOps'
+		OPS(VID=130, Ver=0, ID=0, ID=1, ID=4)
+	$end 'MeshOps'
+	$begin 'LastPassNumbers'
+		LP(VID=130, Ver=0, P=4)
+	$end 'LastPassNumbers'
+	$begin 'Profiles'
+		P(VID=130, Ver=0, File='DV130_S138_V0.profile')
+	$end 'Profiles'
+	$begin 'MI'
+		$begin 'SubData'
+			ID=0
+			MI(VID=130, Ver=0, Dir='DV130_S138_MI0_V0.sd/')
+		$end 'SubData'
+	$end 'MI'
+	$begin 'MeshGeomInfo'
+		MGI(VID=130, Ver=0, Dir='DV130_S138_V0_MGI/')
+	$end 'MeshGeomInfo'
+$end 'SolutionBlock6'
+$begin 'SolutionBlock1'
+	ProductName=''
+	CircuitName='Maxwell2DDesign2'
+	VersionID=102
+	PostProcess=false
+	LossLess=true
+	NextUniqueID=345
+	MoveBackwards=false
+	$begin 'VariationIDs'
+		Map(V='fractions=\'4\'', ID=130)
+	$end 'VariationIDs'
+	$begin 'LinkedDataList'
+	$end 'LinkedDataList'
+	$begin 'InitialMeshes'
+		M(VID=130, Ver=102, Dir='DV130_V102.imesh/')
+	$end 'InitialMeshes'
+	$begin 'MI'
+		$begin 'SubData'
+			ID=0
+			MI(VID=130, Ver=102, Dir='DV130_MI0_V102.sd/')
+		$end 'SubData'
+	$end 'MI'
+$end 'SolutionBlock1'
+$begin 'SolutionBlock17'
+	ConvSetupName='eConv'
+	MaxPasses='100'
+	MinPasses='2'
+	ConvTarget='(1, 1)'
+	ConvTargetConsecPasses='N/A'
+	ConvCurrentConsecPasses='N/A'
+	c(tri=93406, p=1, ee=1.115725826961776, te=432.4490953382454, de_ee='(1.1157, N/A)')
+	c(tri=122639, p=2, ee=0.177472821755081, te=442.525891057317, de_ee='(0.17747, 2.3302)', de=2.330169221695306)
+	c(tri=159432, p=3, ee=0.07008305879689143, te=308.3919335531525, de_ee='(0.070083, 30.311)', de=30.31098523606864)
+	c(tri=207262, p=4, ee=0.0340218044344626, te=308.7741311384228, de_ee='(0.034022, 0.12393)', de=0.1239324196540458)
+$end 'SolutionBlock17'
+$begin '$index$'
+	$begin '$index$'
+		SolutionBlock17(pos=3034, lin=106, lvl=0)
+		SolutionBlock88(pos=370, lin=1, lvl=0)
+		BlockMapName(pos=777, lin=21, lvl=0)
+		SolutionBlock89(pos=1275, lin=28, lvl=0)
+		SolutionBlock6(pos=1712, lin=50, lvl=0)
+		SolutionBlock1(pos=2514, lin=83, lvl=0)
+		$base_index$(pos=0, lin=1, lvl=0)
+		$index$(pos=3650, lin=118, lvl=0)
+	$end '$index$'
+$end '$index$'
